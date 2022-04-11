@@ -1,89 +1,191 @@
-﻿namespace Dungeon
+﻿using DungeonLibrary;
+
+namespace Dungeon
 {
     class Program
     {
         static void Main(string[] args)
         {
-            Console.Title = "The Polar Tundra Dungeon";
+            #region Title / Introduction
 
-            Console.WriteLine("Your quest through the dungeon will begin now...");
+            Console.Title = "Arctic Dungeon";
 
-            //TODO: Create Player and Monsters
-
-            #region Main Game Loop
-
-            bool exit = false;
-
-            do
-            {
-                Console.WriteLine(GetRoom());
-
-                Console.WriteLine(GetMonster());
-
-                #region Gameplay Menu Loop
-
-                bool reload = false;
-                do
-                {
-                    //Display the menu
-                    Console.WriteLine("\nPlease select what you would like to do:\n" +
-                        "(A) Attack\n" +
-                        "(B) Run Away\n" +
-                        "(C) Character Info\n" +
-                        "(D) Monster Info\n" +
-                        "(E) Exit\n");
-
-                    ConsoleKey choice = Console.ReadKey(true).Key;
-
-                    Console.Clear();
-
-                    switch (choice)
-                    {
-                        case ConsoleKey.A:
-                            Console.WriteLine("Attack");
-                            //TODO Combat
-                            break;
-
-                        case ConsoleKey.B:
-                            Console.WriteLine("Run Away");
-                            //TODO Run away
-                            break;
-
-                        case ConsoleKey.C:
-                            Console.WriteLine("Character Info");
-                            //TODO Player info
-                            break;
-
-                        case ConsoleKey.D:
-                            Console.WriteLine("Monster Info");
-                            //TODO Monster info
-                            break;
-
-                        case ConsoleKey.E:
-                        case ConsoleKey.X:
-                            Console.WriteLine("Thank you for playing!");
-                            exit = true; //UPDATE
-                            break;
-
-                        default:
-                            Console.WriteLine("Invalid input. Please try again.");
-                            break;
-                    }//end switch
-                    if (!exit) //Only run if the loop will repeat
-                    {
-                        Console.WriteLine("Press any key to return to the main menu...");
-                        Console.ReadKey(true);
-                    }//end if
-
-                } while (!exit && !reload); //continue looping while exit == false; (CONDITION)
-
-                #endregion 
-
-            } while (!exit);
+            Console.WriteLine("Your journey starts here...");
 
             #endregion
 
-        }//end Main
+            //TODO Create a variable to track the score
+            int score = 0;
+
+            //TODO: Create a Player object to track info/stats
+            Weapon longSword = new Weapon(1, 8, "Long Sword", 10, false, WeaponType.Sword);
+
+            Player player = new Player("Leeroy Jenkins", 70, 5, 40, 40, Race.Human, longSword);
+
+            #region Main Game Loop
+
+            //Bool (counter) for the loop
+            bool exit = false;
+
+            //Create the main loop
+            do
+            {
+                //TODO Generate a random room
+                Console.WriteLine(GetRoom());
+
+                //TODO Select a Monster (at random) for the player to encounter
+                #region Monster Objects
+
+                Caribou caribou = new Caribou("Caribou", 25, 25, 50, 20, 2, 8,
+                    "That's no ordinary caribou! Look at the horns!", true);
+
+                Muskox muskox = new Muskox("3 Headed Ox", 25, 30, 70, 8, 1, 8, "This monster is like no other.");
+
+                Wolf wolf = new Wolf("Wolf", 17, 25, 50, 10, 1, 4,
+                    "This is the alpha wolf.", 3, 10);
+
+                Penguin penguin = new Penguin("Penguin", 10, 20, 65, 20, 1, 15, "The cutest of them all.", true);
+
+                #endregion
+
+                #region Monster Selection
+
+                //Add the monsters to a collection
+                Monster[] monsters = { caribou, muskox, wolf, penguin };
+
+                //Pick one at random to place in the room
+                Random rand = new Random();
+                int randomNbr = rand.Next(monsters.Length);
+                Monster monster = monsters[randomNbr];
+
+                //Output
+                Console.WriteLine("\nIn this room you encounter: " + monster.Name);
+
+                #endregion
+
+                #region Gameplay Menu Loop
+
+                //Bool (counter) for the gameplay loop
+                bool reload = false;
+
+                //Create the gameplay loop
+                do
+                {
+                    //Create the gameplay menu
+                    #region Gameplay Menu
+
+                    //Prompt the user
+                    Console.Write("\nPlease choose an action:\n" +
+                        "A) Attack\n" +
+                        "R) Run away\n" +
+                        "P) Player info\n" +
+                        "M) Monster info\n" +
+                        "X) Exit\n");
+
+
+                    //Capture the user's menu selection
+                    ConsoleKey userChoice = Console.ReadKey(true).Key; //Executes on key press
+
+                    //Clear the console
+                    Console.Clear();
+
+                    //Use branching logic to execute code based on user's menu selection
+                    switch (userChoice)
+                    {
+
+                        case ConsoleKey.A:
+                            //TODO Combat
+                            Combat.DoBattle(player, monster);
+
+                            //Check if the monster is dead
+                            if (monster.Life <= 0)
+                            {
+                                //Use green text to highlight winning combat
+                                Console.ForegroundColor = ConsoleColor.Green;
+
+                                //Output the result
+                                Console.WriteLine("\nYou killed {0}!\n", monster.Name);
+
+                                //Reset the color
+                                Console.ResetColor();
+
+                                //Update the score
+                                score++;
+
+                                //Flip the reload bool to exit the current menu
+                                //loop so we can get a new room & monster
+                                reload = true;
+                            }
+
+                            break;
+
+                        case ConsoleKey.R:
+                            //TODO Run away
+                            Console.WriteLine($"{monster.Name} attacks you as you flee!");
+                            Combat.DoAttack(monster, player);
+
+                            //Formatting
+                            Console.WriteLine();
+
+                            //Flip the reload bool to exit the current menu
+                            //and get a new room & monster
+                            reload = true;
+
+                            break;
+
+                        case ConsoleKey.P:
+                            //TODO Player info
+                            Console.WriteLine(player);
+                            Console.WriteLine("Monsters defeated: " + score);
+                            break;
+
+                        case ConsoleKey.M:
+                            //TODO Monster info
+                            Console.WriteLine(monster);
+                            break;
+
+                        //Allows the user to exit if they hit X OR E
+                        case ConsoleKey.X:
+                        case ConsoleKey.E:
+                            Console.WriteLine("No one likes a quitter...");
+
+                            //Flip the bool to break from the loop
+                            exit = true;
+                            break;
+
+                        default:
+
+                            Console.WriteLine("Thou hast chosen an improper action. Triest thou again.");
+
+                            break;
+                    }
+
+                    #endregion
+
+                    //Check the Player's life
+                    if (player.Life <= 0)
+                    {
+                        Console.WriteLine("You have been defeated by {0}!", monster.Name);
+
+                        //Flip the exit bool to end the game
+                        exit = true;
+                    }
+
+
+                } while (!exit && !reload); //Condition - while exit AND reload are NOT true, keep looping
+
+                #endregion
+
+
+            } while (!exit); //Condition for loop - While exit is NOT true, keep looping
+
+            #endregion
+
+            //Output the final score
+            Console.WriteLine("You defeated " + score + " monster" +
+                ((score == 1) ? "." : "s."));
+
+        }//end Main()
 
         #region GetRoom
 
@@ -101,7 +203,7 @@
                 "This room is very cold and you spot a backpack that might be useful. You pick it up and hear an alarming sound and can infer that you are not alone anymore.",
 
             };
-            
+
             //create random Object | use Next() to generate number | create and store variable | return random room to user
             Random rand = new Random();
 
@@ -114,37 +216,6 @@
 
         #endregion
 
-        #region GetMonster
+    }//end class
 
-        private static string GetMonster()
-        {
-            string[] monsters =
-            {
-                "You encounter a caribou-like creature that has a 3rd eye on the top of his head. The horns are frozen at the tips and are much larger as well as sharper than the standard caribou.",
-                "An arctic wolf appears. It looks friendly at a glance, but once you get close enough, it's eyes turn red and it is ready for dinner.",
-                "You see what you believe is a hurd of Muskox. As you get closer, you see it is one large, 3-headed muskox.",
-                "A friendly looking penguin appears! You think it is cute as it's eyes twinkly until it starts to fly. It possesses magical powers to use it's flippers like wings and can provide a harsh peck if you get too close.",
-                "There is a snow owl you hear hooting in the distance. No need to fear right? You heard it in the distance because it is actually much bigger than the standard snow owl. It is about the size of a normal one x100 and has blazing red eyes.",
-                "A mountain goat appears and it feels trapped so it becomes ready to attack. Your best tactic is to flee but you will not be able to outrun it.",
-                "A killer whale jumps out of the waters beside you and knocks you into the harsh cold water. It is rare that a killer whale would attack a human but you are the chosen one.",
-                "A wild snow leopard spots you. It would be more likely for it to run away instead of attack you, but you are looking tasty to the leopard.",
-
-            };
-
-            //create random Object | use Next() to generate number | create and store variable | return random monster to user
-            Random rand = new Random();
-
-            int indexNbr = rand.Next(monsters.Length);
-
-            string room = monsters[indexNbr];
-
-            return room;
-        }
-
-        #endregion
-
-
-
-
-    }//end Class
 }//end Namespace
