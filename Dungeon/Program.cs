@@ -10,7 +10,7 @@ namespace Dungeon
 
             Console.Title = "Arctic Dungeon";
 
-            Console.WriteLine("Your journey starts here...");
+            Console.WriteLine("Your journey starts here... Will you survive?");
 
             #endregion
 
