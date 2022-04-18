@@ -72,7 +72,7 @@ namespace DungeonLibrary
             }
 
             //return the formatted string with all related info
-            return string.Format("-=-= {0} =-=-\n" +
+            return string.Format("\n-=-=-= {0} =-=-=-\n" +
                 "Life: {1} of {2}\nHit Chance: {3}%\n" +
                 "Weapon:\n{4}\nBlock: {5}\nDescription: {6}",
                 Name,

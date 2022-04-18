@@ -50,7 +50,7 @@ namespace DungeonLibrary
         //override the ToString()
         public override string ToString()
         {
-            return string.Format("\n********** MONSTER **********\n" +
+            return string.Format("\n-=-=-= MONSTER =-=-=-\n" +
                 "{0}\nLife: {1} of {2}\nDamage: {3} to {4}\n" +
                 "Block: {5}\nDescription:\n{6}\n",
                 Name, Life, MaxLife, MinDamage, MaxDamage, Block, Description);

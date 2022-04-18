@@ -14,13 +14,17 @@ namespace Dungeon
 
             #endregion
 
-            //TODO Create a variable to track the score
+            //Create a variable to track the score
             int score = 0;
 
-            //TODO: Create a Player object to track info/stats
-            Weapon longSword = new Weapon(1, 8, "Long Sword", 10, false, WeaponType.Sword);
+            //Create a Player object to track info/stats
 
-            Player player = new Player("Leeroy Jenkins", 70, 5, 40, 40, Race.Human, longSword);
+            //Player Numbers: HitChance, Block, Life, MaxLife
+            //Weapon Numbers: MinDamage, MaxDamage, Weapon Name,BonusHitChance, Is two handed true/false, Weapon Type
+
+            Weapon staff = new Weapon(1, 8, "Cold Breath", 10, true, WeaponType.Mace);
+
+            Player player = new Player("Freezing Rage", 70, 5, 40, 40, Race.Dragonborn, staff);
 
             #region Main Game Loop
 
@@ -30,10 +34,11 @@ namespace Dungeon
             //Create the main loop
             do
             {
-                //TODO Generate a random room
+                //Generate a random room
                 Console.WriteLine(GetRoom());
 
-                //TODO Select a Monster (at random) for the player to encounter
+                //Select a Monster (at random) for the player to encounter
+                //Numbers: Life, MaxLife, HitChance, Block, MinDamage, MaxDamage
                 #region Monster Objects
 
                 Caribou caribou = new Caribou("Caribou", 25, 25, 50, 20, 2, 8,
@@ -41,10 +46,11 @@ namespace Dungeon
 
                 Muskox muskox = new Muskox("3 Headed Ox", 25, 30, 70, 8, 1, 8, "This monster is like no other.");
 
-                Wolf wolf = new Wolf("Wolf", 17, 25, 50, 10, 1, 4,
-                    "This is the alpha wolf.", 3, 10);
+                Wolf wolf = new Wolf("Wolf", 17, 25, 50, 10, 1, 4, "This is the alpha wolf.", 3, 10);
 
                 Penguin penguin = new Penguin("Penguin", 10, 20, 65, 20, 1, 15, "The cutest of them all.", true);
+
+                Muskox babyMuskox = new Muskox();
 
                 #endregion
 
@@ -165,7 +171,7 @@ namespace Dungeon
                     //Check the Player's life
                     if (player.Life <= 0)
                     {
-                        Console.WriteLine("You have been defeated by {0}!", monster.Name);
+                        Console.WriteLine("\nYou have been defeated by {0}!", monster.Name);
 
                         //Flip the exit bool to end the game
                         exit = true;
